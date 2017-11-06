@@ -1,4 +1,4 @@
-package com.example.house.proyectcar.Normal;
+package com.example.house.proyectcar.Clases;
 
 /**
  * Created by house on 01-11-2017.
@@ -8,10 +8,9 @@ public class Venta {
 
     private String id;
     private String fecha;
-    private Cliente nombre;
-    private Vehiculo tipo;
+    private String nombre;
+    private String tipo;
     private String valor;
-    private String detalle;
 
 
     public String getId() {
@@ -30,22 +29,6 @@ public class Venta {
         this.fecha = fecha;
     }
 
-    public Cliente getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(Cliente nombre) {
-        this.nombre = nombre;
-    }
-
-    public Vehiculo getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(Vehiculo tipo) {
-        this.tipo = tipo;
-    }
-
     public String getValor() {
         return valor;
     }
@@ -54,11 +37,19 @@ public class Venta {
         this.valor = valor;
     }
 
-    public String getDetalle() {
-        return detalle;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setDetalle(String detalle) {
-        this.detalle = detalle;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }

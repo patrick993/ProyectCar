@@ -4,10 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
-import com.example.house.proyectcar.Normal.Cliente;
-import com.example.house.proyectcar.Normal.Vehiculo;
-import com.example.house.proyectcar.Normal.Venta;
+import com.example.house.proyectcar.Clases.Cliente;
+import com.example.house.proyectcar.Clases.Vehiculo;
+import com.example.house.proyectcar.Clases.Venta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class OpenHelperDB extends SQLiteOpenHelper {
         private static final String NOMBRE_BASEDATOS = "VentaVehiculos.db";
         private static final String TABLA_CLIENTE =
                 "CREATE TABLE cliente (" +
-                        "id TEXT PRIMARY KEY AUTOINCREMENT, " +
+                        "codigo TEXT PRIMARY KEY AUTOINCREMENT, " +
                         "nombre TEXT, " +
                         "apellido TEXT, " +
                         "direccion TEXT);";
@@ -33,15 +34,15 @@ public class OpenHelperDB extends SQLiteOpenHelper {
                         "patente INTEGER PRIMARY KEY, " +
                         "tipo TEXT, " +
                         "marca TEXT, " +
-                        "nombreCliente, " +
                         "modelo TEXT);";
 
         private static final String TABLA_VENTA =
                 "CREATE TABLE venta (" +
-                        "idVenta INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        "valor INT, " +
-                        "detalle TEXT, " +
-                        "fecha DATE);";
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "fecha String, " +
+                        "nombre String, " +
+                        "tipo String, " +
+                        "valor String);";
 
         private static final String INSERTAR_VEHICULO_AUTO_1 =
                 "INSERT INTO vehiculo (tipo, marca, modelo, patente, nombreCliente) VALUES (" +
@@ -73,6 +74,14 @@ public class OpenHelperDB extends SQLiteOpenHelper {
                         "'wick', " +
                         "'usa');";
 
+        private static final String INSERTAR_VENTA =
+                "INSERT INTO venta (id, fecha, nombre, tipo, valor) VALUES (" +
+                        "'09-10-2017', " +
+                        "'carlos', " +
+                        "'camioneta', " +
+                        "'$1.000.000');";
+
+
 
 
 
@@ -100,8 +109,254 @@ public class OpenHelperDB extends SQLiteOpenHelper {
             onCreate(db);
 
         }
+    //Inicio C.R.U.D cliente
+        public void insertarDatos(Cliente cliente)
+        {
+            SQLiteDatabase db= getWritableDatabase();
 
-        public void ejecutarSentencia(String sentencia)
+            if(db != null)
+            {
+                db.execSQL("INSERT INTO cliente "
+                        + "(nombre, apellido, direccion, codigo)"
+                        + "VALUES ("
+                        + "'" + cliente.getNombre() + "',"
+                        + "'" + cliente.getApellido() + "',"
+                        + "'" + cliente.getDireccion() + "',"
+                        + "'" + cliente.getCodigo() + "');");
+            }
+
+            db.close();
+        }
+
+        public void actualizarCliente(Cliente cliente)
+        {
+            SQLiteDatabase db= getWritableDatabase();
+
+            if(db != null)
+            {
+                db.execSQL("UPDATE cliente "
+                        + " SET "
+                        + " nombre = '" + cliente.getNombre()
+                        + " apellido = '" + cliente.getApellido()
+                        + " direccion = '" + cliente.getDireccion()
+                        + "'WHERE codigo = '"+cliente.getCodigo() +"';");
+
+            }
+
+            db.close();
+        }
+
+        public void eliminarCliente(String codigo)
+        {
+            SQLiteDatabase db= getWritableDatabase();
+
+            if(db != null)
+            {
+                db.execSQL("DELETE FROM cliente "
+                        + "WHERE codigo = '" + codigo + "';");
+            }
+
+            db.close();
+        }
+
+        public void eliminarTodosLosCliente(String codigo)
+        {
+            SQLiteDatabase db= getWritableDatabase();
+
+            if(db != null)
+            {
+                db.execSQL("DELETE FROM cliente ;");
+            }
+
+            db.close();
+        }
+
+        public Cliente buscarCliente(String codigo)
+        {
+            SQLiteDatabase db= getWritableDatabase();
+            Cliente auxCliente = new Cliente();
+
+            Cursor auxCursor = db.rawQuery("SELECT * FROM cliente "
+                    + "WHERE codigo = '" + codigo + "';",null);
+
+            auxCursor.moveToFirst();
+            if(auxCursor != null)
+            {
+                auxCliente.setNombre(auxCursor.getString(0));
+                auxCliente.setApellido(auxCursor.getString(1));
+                auxCliente.setDireccion(auxCursor.getString(2));
+                auxCliente.setCodigo(auxCursor.getString(3));
+            }
+            else
+            {
+                auxCliente.setNombre("");
+                auxCliente.setApellido("");
+                auxCliente.setDireccion("");
+                auxCliente.setCodigo("");
+            }
+            auxCursor.close();
+            db.close();
+            return auxCliente;
+        }
+//Fin C.R.U.D cliente
+
+//Inicio C.R.U.D vehiculo
+        public void insertarVehiculo(Vehiculo vehiculo)
+        {
+            SQLiteDatabase db= getWritableDatabase();
+
+            if(db != null)
+            {
+                db.execSQL("INSERT INTO vehiculo "
+                        + "(patente, tipo, marca, modelo)"
+                        + "VALUES ("
+                        + "'" + vehiculo.getPatente() + "',"
+                        + "'" + vehiculo.getTipo() + "',"
+                        + "'" + vehiculo.getMarca() + "',"
+                        + "'" + vehiculo.getModelo() + "');");
+            }
+
+            db.close();
+        }
+
+    public void actualizarVehiculo(Vehiculo vehiculo)
+    {
+        SQLiteDatabase db= getWritableDatabase();
+
+        if(db != null)
+        {
+            db.execSQL("UPDATE vehiculo "
+                    + " SET "
+                    + " patente = '" + vehiculo.getPatente()
+                    + " tipo = '" + vehiculo.getTipo()
+                    + " marca = '" + vehiculo.getMarca()
+                    + " marca = '" + vehiculo.getModelo()
+                    + "'WHERE patente = '"+vehiculo.getPatente() +"';");
+
+        }
+
+        db.close();
+    }
+
+    public void eliminarVehiculo(String patente)
+    {
+        SQLiteDatabase db= getWritableDatabase();
+
+        if(db != null)
+        {
+            db.execSQL("DELETE FROM vehiculo "
+                    + "WHERE patente = '" + patente + "';");
+        }
+
+        db.close();
+    }
+
+    public void eliminarTodosLosVehiculos(String patente)
+    {
+        SQLiteDatabase db= getWritableDatabase();
+
+        if(db != null)
+        {
+            db.execSQL("DELETE FROM vehiculo ;");
+        }
+
+        db.close();
+    }
+
+    public Vehiculo buscarVehiculo(String patente)
+    {
+        SQLiteDatabase db= getWritableDatabase();
+        Vehiculo auxVehiculo = new Vehiculo();
+
+        Cursor auxCursor = db.rawQuery("SELECT * FROM vehiculo "
+                + "WHERE patente = '" + patente + "';",null);
+
+        auxCursor.moveToFirst();
+        if(auxCursor != null)
+        {
+            auxVehiculo.setPatente(auxCursor.getString(0));
+            auxVehiculo.setTipo(auxCursor.getString(1));
+            auxVehiculo.setMarca(auxCursor.getString(2));
+            auxVehiculo.setModelo(auxCursor.getString(3));
+        }
+        else
+        {
+            auxVehiculo.setPatente("");
+            auxVehiculo.setTipo("");
+            auxVehiculo.setMarca("");
+            auxVehiculo.setModelo("");
+        }
+        auxCursor.close();
+        db.close();
+        return auxVehiculo;
+    }
+    //Fin C.R.U.D vehiculo
+
+    //Inicio C.R.U.D venta
+
+    public void insertarVenta(Venta venta)
+    {
+        SQLiteDatabase db= getWritableDatabase();
+
+        if(db != null)
+        {
+            db.execSQL("INSERT INTO venta "
+                    + "(fecha, nombre, tipo, valor)"
+                    + "VALUES ("
+                    + "'" + venta.getFecha() + "',"
+                    + "'" + venta.getNombre() + "',"
+                    + "'" + venta.getTipo() + "',"
+                    + "'" + venta.getValor() + "');");
+        }
+
+        db.close();
+    }
+
+    public void eliminarVenta(String id)
+    {
+        SQLiteDatabase db= getWritableDatabase();
+
+        if(db != null)
+        {
+            db.execSQL("DELETE FROM venta "
+                    + "WHERE id = '" + id + "';");
+        }
+
+        db.close();
+    }
+
+    public Venta buscarVenta(String id)
+    {
+        SQLiteDatabase db= getWritableDatabase();
+        Venta auxVenta = new Venta();
+
+        Cursor auxCursor = db.rawQuery("SELECT * FROM venta "
+                + "WHERE id = '" + id + "';",null);
+
+        auxCursor.moveToFirst();
+        if(auxCursor != null)
+        {
+            auxVenta.setId(auxCursor.getString(0));
+            auxVenta.setNombre(auxCursor.getString(1));
+            auxVenta.setTipo(auxCursor.getString(2));
+            auxVenta.setFecha(auxCursor.getString(3));
+            auxVenta.setValor(auxCursor.getString(3));
+        }
+        else
+        {
+            auxVenta.setId("");
+            auxVenta.setNombre("");
+            auxVenta.setTipo("");
+            auxVenta.setFecha("");
+            auxVenta.setValor("");
+        }
+        auxCursor.close();
+        db.close();
+        return auxVenta;
+    }
+//Fin C.R.U.D venta
+
+    public void ejecutarSentencia(String sentencia)
         {
             SQLiteDatabase db = getWritableDatabase();
 
@@ -111,26 +366,6 @@ public class OpenHelperDB extends SQLiteOpenHelper {
             }
 
             db.close();
-        }
-
-        public Boolean login(String sentencia, String usuario, String password)
-        {
-            SQLiteDatabase db = getWritableDatabase();
-
-            Cursor cursor = db.rawQuery(sentencia,null);
-
-            if(cursor.moveToFirst() == true)
-            {
-                String auxUsuario = cursor.getString(0);
-                String auxPassword = cursor.getString(1);
-
-                if(usuario.equals(auxUsuario) && password.equals(auxPassword))
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         public Boolean nombreUsuarioExiste(String sentencia, String usuario)
@@ -152,97 +387,9 @@ public class OpenHelperDB extends SQLiteOpenHelper {
             return false;
         }
 
-        public List<Cliente> listarCliente (String sentencia)
-        {
-            SQLiteDatabase db = getWritableDatabase();
-            List<Cliente> auxListaCliente = new ArrayList<>();
 
-            Cursor cursor = db.rawQuery(sentencia,null);
-            cursor.moveToFirst();
 
-            int countCursor = cursor.getCount();
-
-            if(countCursor > 0)
-            {
-                do
-                {
-                    Cliente auxClientes = new Cliente();
-                    auxClientes.setCodigo(cursor.getString(0));
-                    auxClientes.setNombre(cursor.getString(1));
-                    auxClientes.setApellido(cursor.getString(2));
-                    auxClientes.setDireccion(cursor.getString(3));
-                    auxListaCliente.add(auxClientes);
-                }
-                while(cursor.moveToNext());
-            }
-
-            cursor.close();
-            db.close();
-
-            return  auxListaCliente;
-        }
-
-        public List<Vehiculo> listarVehiculo(String sentencia)
-        {
-            SQLiteDatabase db = getWritableDatabase();
-            List<Vehiculo> auxListaVehiculo = new ArrayList<>();
-
-            Cursor cursor = db.rawQuery(sentencia,null);
-            cursor.moveToFirst();
-
-            int countCursor = cursor.getCount();
-
-            if(countCursor > 0)
-            {
-                do
-                {
-                    Vehiculo auxVehiculo = new Vehiculo();
-                    auxVehiculo.setModelo(cursor.getString(0));
-                    auxVehiculo.setPatente(cursor.getString(1));
-                    auxVehiculo.setMarca(cursor.getString(2));
-                    auxVehiculo.setTipo(cursor.getString(3));
-                    auxListaVehiculo.add(auxVehiculo);
-                }
-                while(cursor.moveToNext());
-            }
-
-            cursor.close();
-            db.close();
-
-            return  auxListaVehiculo;
-        }
-
-        public List<Venta> listarVenta (String sentencia)
-        {
-            SQLiteDatabase db = getWritableDatabase();
-            List<Venta> auxListaVenta = new ArrayList<>();
-
-            Cursor cursor = db.rawQuery(sentencia,null);
-            cursor.moveToFirst();
-
-            int countCursor = cursor.getCount();
-
-            if(countCursor > 0)
-            {
-                do
-                {
-                    Venta auxVenta = new Venta();
-                    auxVenta.setId(cursor.getString(0));
-                    auxVenta.setValor(cursor.getString(1));
-                    auxVenta.setDetalle(cursor.getString(2));
-                    auxVenta.setFecha(cursor.getString(3));
-                    auxListaVenta.add(auxVenta);
-                }
-                while(cursor.moveToNext());
-            }
-
-            cursor.close();
-            db.close();
-
-            return  auxListaVenta;
-        }
-
-        public List<String> estadisticaVehiculo(String sentencia)
+    public List<String> estadisticaVehiculo(String sentencia)
         {
             SQLiteDatabase db = getWritableDatabase();
             List<String> auxEstadisticaVehiculo = new ArrayList<>();
@@ -267,21 +414,32 @@ public class OpenHelperDB extends SQLiteOpenHelper {
             return  auxEstadisticaVehiculo;
         }
 
-        public String seleccionar(String sentencia)
-        {
-            SQLiteDatabase db = getWritableDatabase();
+    public List<Cliente> retornaCliente()
+    {
+        SQLiteDatabase db= getWritableDatabase();
 
-            Cursor cursor = db.rawQuery(sentencia,null);
+        List<Cliente> auxListaCliente = new ArrayList<>();
+        Cursor auxCursor = db.rawQuery("SELECT * FROM cliente;", null);
 
-            String seleccionar = "";
+        auxCursor.moveToFirst();
 
-            if(cursor.moveToFirst() == true)
-            {
-                seleccionar = cursor.getString(0);
+        do {
+            Cliente auxCliente = new Cliente();
+            auxCliente.setNombre(auxCursor.getString(0));
+            auxCliente.setApellido(auxCursor.getString(1));
+            auxCliente.setDireccion(auxCursor.getString(2));
+            auxCliente.setCodigo(auxCursor.getString(3));
+            auxListaCliente.add(auxCliente);
 
-                return seleccionar;
-            }
+        }while (auxCursor.moveToNext());
 
-            return seleccionar;
-        }
+        auxCursor.close();
+        db.close();
+        return auxListaCliente;
+
+
     }
+
+
+
+}
